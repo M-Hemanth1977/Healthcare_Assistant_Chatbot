@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
 
-  # to run this workflow manually from the Actions tab
+  # run manually from the Actions tab
   workflow_dispatch:
 
 jobs:
@@ -14,7 +14,21 @@ jobs:
         with:
           fetch-depth: 0
           lfs: true
-      - name: Push to hub
+
+      - name: Set up Git
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+
+      - name: Pull latest from Hugging Face
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: git push https://Aswadham:$HF_TOKEN@huggingface.co/spaces/Aswadham/Healthcare_Assistant_Chatbot main
+        run: |
+          git pull --rebase https://Aswadham:${HF_TOKEN}@huggingface.co/spaces/Aswadham/Healthcare_Assistant_Chatbot main
+
+      - name: Push to Hugging Face
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          git push https://Aswadham:${HF_TOKEN}@huggingface.co/spaces/Aswadham/Healthcare_Assistant_Chatbot main
+
